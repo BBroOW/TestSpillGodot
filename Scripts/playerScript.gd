@@ -9,6 +9,13 @@ var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 @onready var neck := $Neck
 @onready var camera := $Neck/Camera3D
 
+@onready var floorMesh := $".."/Bakke
+
+var matGreen = preload("res://Matirials/green.tres")
+var matRed = preload("res://Matirials/red.tres")
+
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
@@ -25,6 +32,10 @@ func _physics_process(delta: float) -> void:
 
 	if not is_on_floor():
 		velocity.y -= gravity * delta
+		floorMesh.set_surface_override_material(0,matRed)
+	else:
+		floorMesh.set_surface_override_material(0,matGreen)
+		
 	
 	if Input.is_action_pressed("ui_accept") and is_on_floor():
 		velocity.y = JUMP_VELOCITY

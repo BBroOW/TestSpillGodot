@@ -1,4 +1,6 @@
-[gd_scene load_steps=8 format=3 uid="uid://3gvv5ac7baiv"]
+[gd_scene load_steps=9 format=3 uid="uid://3gvv5ac7baiv"]
+
+[ext_resource type="Script" path="res://playerScript.gd" id="1_07pw3"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_7cvjs"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -43,6 +45,7 @@ shape = SubResource("ConcavePolygonShape3D_d1wmn")
 
 [node name="Player" type="CharacterBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.10197, 0)
+script = ExtResource("1_07pw3")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Player"]
 mesh = SubResource("CapsuleMesh_g2m0g")

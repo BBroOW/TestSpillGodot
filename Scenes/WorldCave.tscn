@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://dqj3fxyk2gcib"]
+[gd_scene load_steps=16 format=3 uid="uid://dqj3fxyk2gcib"]
 
 [ext_resource type="Script" path="res://Scripts/playerScript.gd" id="1_0vege"]
 [ext_resource type="AudioStream" uid="uid://ife8oqopxmh6" path="res://Sounds/SoundEffects/jump.wav" id="2_bsb6f"]
@@ -26,6 +26,22 @@ points = PackedVector3Array(-0.125207, -0.532801, -0.480507, 0.0227831, 0.47607,
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_f6g7y"]
 data = PackedVector3Array(1, 0, 1, -1, 0, 1, 1, 0, -1, -1, 0, 1, -1, 0, -1, 1, 0, -1)
 
+[sub_resource type="QuadMesh" id="QuadMesh_414fb"]
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_vlnh1"]
+data = PackedVector3Array(0.5, -0.5, 0, -0.5, -0.5, 0, 0.5, 0.5, 0, -0.5, -0.5, 0, -0.5, 0.5, 0, 0.5, 0.5, 0)
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_fot27"]
+data = PackedVector3Array(0.5, -0.5, 0, -0.5, -0.5, 0, 0.5, 0.5, 0, -0.5, -0.5, 0, -0.5, 0.5, 0, 0.5, 0.5, 0)
+
+[sub_resource type="QuadMesh" id="QuadMesh_xtqu3"]
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_icvsk"]
+data = PackedVector3Array(0.5, -0.5, 0, -0.5, -0.5, 0, 0.5, 0.5, 0, -0.5, -0.5, 0, -0.5, 0.5, 0, 0.5, 0.5, 0)
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_qki8o"]
+data = PackedVector3Array(0.5, -0.5, 0, -0.5, -0.5, 0, 0.5, 0.5, 0, -0.5, -0.5, 0, -0.5, 0.5, 0, 0.5, 0.5, 0)
+
 [node name="WorldCave" type="Node3D"]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
@@ -36,7 +52,7 @@ transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -
 shadow_enabled = true
 
 [node name="Player" type="CharacterBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 1, 95)
 platform_wall_layers = 1
 script = ExtResource("1_0vege")
 
@@ -56,11 +72,57 @@ stream = ExtResource("2_bsb6f")
 volume_db = -15.238
 max_db = -5.857
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+[node name="Map" type="Node3D" parent="."]
+
+[node name="Floor" type="MeshInstance3D" parent="Map"]
 transform = Transform3D(100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0)
 mesh = SubResource("PlaneMesh_5t4ed")
+skeleton = NodePath("../..")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Map/Floor"]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Map/Floor/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_f6g7y")
+
+[node name="Walls" type="Node3D" parent="Map"]
+transform = Transform3D(-4.37114e-06, 0, -1, 0, 10, 0, 100, 0, -4.37114e-08, 100, 5, 50)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Map/Walls"]
+transform = Transform3D(1, 0, 2.77556e-17, 0, 1, 0, -4.54747e-13, 0, 1, 0, 0, 0)
+mesh = SubResource("QuadMesh_414fb")
+skeleton = NodePath("../../..")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Map/Walls/MeshInstance3D"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Map/Walls/MeshInstance3D/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_vlnh1")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="Map/Walls"]
+transform = Transform3D(1, 0, 0, 0, -1, -8.74228e-08, 0, 8.74228e-08, -1, 0, 0, 100)
+mesh = SubResource("QuadMesh_414fb")
+skeleton = NodePath("../../..")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Map/Walls/MeshInstance3D4"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Map/Walls/MeshInstance3D4/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_fot27")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Map/Walls"]
+transform = Transform3D(-4.37114e-08, 0, 0.01, 0, 1, 0, -100, 0, -4.37114e-08, -0.5, 0, 50)
+mesh = SubResource("QuadMesh_xtqu3")
+skeleton = NodePath("../../..")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Map/Walls/MeshInstance3D2"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Map/Walls/MeshInstance3D2/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_icvsk")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="Map/Walls"]
+transform = Transform3D(-4.37114e-08, 8.74228e-09, -0.01, 0, -1, -8.74228e-09, -100, -3.82137e-14, 4.37114e-08, 0.5, 0, 50)
+mesh = SubResource("QuadMesh_xtqu3")
+skeleton = NodePath("../../..")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Map/Walls/MeshInstance3D3"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Map/Walls/MeshInstance3D3/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_qki8o")

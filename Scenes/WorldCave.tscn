@@ -1,9 +1,10 @@
-[gd_scene load_steps=25 format=3 uid="uid://dqj3fxyk2gcib"]
+[gd_scene load_steps=26 format=3 uid="uid://dqj3fxyk2gcib"]
 
 [ext_resource type="Script" path="res://Scripts/playerScript.gd" id="1_0vege"]
 [ext_resource type="AudioStream" uid="uid://ife8oqopxmh6" path="res://Sounds/SoundEffects/jump.wav" id="2_bsb6f"]
 [ext_resource type="PackedScene" uid="uid://dagccc35asgcf" path="res://Assets/Interaction/PlayerInteractor.tscn" id="3_itjbf"]
 [ext_resource type="PackedScene" uid="uid://cgs01y24s034n" path="res://Assets/Interaction/Interactable.tscn" id="4_7xqw5"]
+[ext_resource type="PackedScene" uid="uid://sw8fsx0nun8w" path="res://Assets/Bullet.tscn" id="5_13efb"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_m4c73"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -67,7 +68,8 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	pass
+	MoveBlock.rotation_degrees.x = lerp_angle(MoveBlock.rotation_degrees.x, MoveBlock.rotation_degrees.x-45, 5)
+	
 
 
 func _on_interactable_focused(interactor):
@@ -78,7 +80,11 @@ func _on_interactable_unfocused(interactor):
 	MoveBlock.set_surface_override_material(0, RED)
 	
 func _on_interactable_interacted(interactor):
-	MoveBlock.rotate_x(45)
+	MoveBlock.rotate_x(-45)
+
+
+func _on_timer_timeout():
+	pass
 "
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_8g1f2"]
@@ -102,10 +108,14 @@ environment = SubResource("Environment_isdyy")
 transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
 shadow_enabled = true
 
-[node name="Player" type="CharacterBody3D" parent="."]
+[node name="Player" type="CharacterBody3D" parent="." node_paths=PackedStringArray("ShootPoint")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 1, 95)
 platform_wall_layers = 1
 script = ExtResource("1_0vege")
+ShootPoint = NodePath("Neck/Camera3D/Shootpoint")
+BulletSpeed = 50.0
+BulletGravity = 9.8
+BulletDamage = 123.0
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Player"]
 mesh = SubResource("CapsuleMesh_aymrv")
@@ -117,6 +127,9 @@ shape = SubResource("ConvexPolygonShape3D_wgjhp")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.60181, 0)
 
 [node name="Camera3D" type="Camera3D" parent="Player/Neck"]
+
+[node name="Shootpoint" type="Node3D" parent="Player/Neck/Camera3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0864563, 0, -0.84153)
 
 [node name="PlayerInteractor" parent="Player/Neck" node_paths=PackedStringArray("player") instance=ExtResource("3_itjbf")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.60181, 0)
@@ -207,14 +220,21 @@ mesh = SubResource("BoxMesh_2dwic")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Test/MoveBlock/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_85yi3")
 
+[node name="Timer" type="Timer" parent="Test/MoveBlock"]
+wait_time = 0.504
+autostart = true
+
 [node name="StaticBody3D" type="StaticBody3D" parent="Test"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Test/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_joinn")
 
+[node name="Ball" parent="." instance=ExtResource("5_13efb")]
+
 [connection signal="focused" from="Test/Interactable" to="Test" method="_on_interactable_focused"]
 [connection signal="interacted" from="Test/Interactable" to="Test" method="_on_interactable_interacted"]
 [connection signal="unfocused" from="Test/Interactable" to="Test" method="_on_interactable_unfocused"]
+[connection signal="timeout" from="Test/MoveBlock/Timer" to="Test" method="_on_timer_timeout"]
 
 [editable path="Player/Neck/PlayerInteractor"]
 [editable path="Test/Interactable"]

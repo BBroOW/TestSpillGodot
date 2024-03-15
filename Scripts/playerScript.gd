@@ -4,8 +4,18 @@ const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
 const SPRINT_MULTIPLIER = 2.0
 const SENSITIVITY = 0.001
+@export var ShootPoint: Node3D
+@export var BulletSpeed: float
+@export var BulletGravity: float
+@export var BulletDamage: float
+
+
+
+const BULLET = preload("res://Assets/Bullet.tscn")
 
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
+@onready var rootNode = $".."
+
 @onready var neck := $Neck
 @onready var camera := $Neck/Camera3D
 
@@ -26,7 +36,18 @@ var matRed = preload("res://Matirials/red.tres")
 
 #Movement
 
-
+func _process(delta):
+	if Input.is_action_just_pressed("shoot"):
+		SpawnBullet()
+		
+func SpawnBullet():
+		var clonebullet = BULLET.instantiate()
+		rootNode.add_child(clonebullet)
+		clonebullet.global_transform.origin = ShootPoint.global_transform.origin
+		clonebullet.global_transform.basis = ShootPoint.global_transform.basis
+		clonebullet.scale = Vector3(1, 1, 1)
+		clonebullet.Initialize(ShootPoint.global_transform, BulletSpeed, BulletGravity, BulletDamage)
+			
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
@@ -41,7 +62,6 @@ func _unhandled_input(event: InputEvent) -> void:
 			camera.rotation.x = clamp(camera.rotation.x, -1.5, 1.5)
 
 func _physics_process(delta: float) -> void:
-
 	if not is_on_floor():
 		velocity.y -= gravity * delta
 
